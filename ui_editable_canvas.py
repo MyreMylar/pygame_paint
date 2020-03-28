@@ -44,5 +44,7 @@ class EditableCanvas(pygame_gui.core.ui_element.UIElement):
 
     def update(self, time_delta: float):
         super().update(time_delta)
-
-        self.active_tool.draw(self.image, self.rect.topleft)
+        self.active_tool.update(time_delta=time_delta,
+                                canvas_surface=self.image,
+                                canvas_position=self.rect.topleft)
+        #self.active_tool.draw(self.image, self.rect.topleft)

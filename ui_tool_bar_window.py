@@ -93,7 +93,3 @@ class ToolBarWindow(pygame_gui.elements.UIWindow):
             self.active_tool.set_opacity(int(event.value))
 
         return consumed_event
-
-    def update(self, time_delta: float):
-        super().update(time_delta)
-        self.active_tool.update(time_delta=time_delta)
