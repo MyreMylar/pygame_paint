@@ -31,8 +31,14 @@ class EditableCanvas(pygame_gui.core.ui_element.UIElement):
     def set_active_tool(self, tool):
         self.active_tool = tool
 
+    def get_colour_at(self, pos):
+        return self.image.get_at(pos)
+
     def process_event(self, event: pygame.event.Event) -> bool:
         consumed_event = False
+
+        if event.type == pygame.USEREVENT and event.user_type == 'paint_tool_changed':
+            self.set_active_tool(event.tool)
 
         if (self.active_tool is not None and
                 self.active_tool.process_event(event,
@@ -47,4 +53,4 @@ class EditableCanvas(pygame_gui.core.ui_element.UIElement):
         self.active_tool.update(time_delta=time_delta,
                                 canvas_surface=self.image,
                                 canvas_position=self.rect.topleft)
-        #self.active_tool.draw(self.image, self.rect.topleft)
+

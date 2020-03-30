@@ -5,6 +5,7 @@ from pygame_gui import UIManager
 
 from ui_canvas_window import CanvasWindow
 from ui_tool_bar_window import ToolBarWindow
+from ui_menu_bar import UIMenuBar
 
 
 class PygamePaintApp:
@@ -20,9 +21,17 @@ class PygamePaintApp:
         self.window_background = pygame.Surface(window_dimensions, depth=32)
         self.window_background.fill(pygame.Color(50,50,50))
 
-        self.ui_manager = UIManager(window_dimensions)
+        self.ui_manager = UIManager(window_dimensions, theme_path='data/ui_theme.json')
 
-        self.tool_bar_window = ToolBarWindow(pygame.Rect(10, 10, 200, 700),
+        menu_data = {'#file_menu': {'display_name': 'File'},
+                     '#edit_menu': {'display_name': 'Edit'},
+                     '#view_menu': {'display_name': 'View'},
+                     '#help_menu': {'display_name': 'Help'}}
+        self.menu_bar = UIMenuBar(relative_rect=pygame.Rect(0, 0, 1280, 25),
+                                  menu_item_data=menu_data,
+                                  manager=self.ui_manager)
+
+        self.tool_bar_window = ToolBarWindow(pygame.Rect(0, 25, 200, 695),
                                              manager=self.ui_manager)
 
         new_canvas = pygame.Surface((500, 400), flags=pygame.SRCALPHA, depth=32)
@@ -46,6 +55,7 @@ class PygamePaintApp:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.running = False
+
                 self.ui_manager.process_events(event)
 
             self.ui_manager.update(time_delta=time_delta)

@@ -3,10 +3,13 @@ import pygame
 
 class BrushTool:
 
-    def __init__(self):
-        self.opacity = 255
-        self.colour = pygame.Color(255, 255, 255, 255)
-        self.brush_size = 16
+    def __init__(self, palette_colour, opacity, brush_size):
+        self.option_data = {'palette_colour': pygame.Color(palette_colour.r,
+                                                           palette_colour.g,
+                                                           palette_colour.b, 255),
+                            'opacity': opacity,
+                            'brush_size': brush_size}
+
         self.brush_aa_amount = 4
         self.center_position = (0, 0)
         self.start_painting = False
@@ -47,14 +50,14 @@ class BrushTool:
             self.temp_painting_surface = pygame.Surface(canvas_surface.get_size(),
                                                         flags=pygame.SRCALPHA,
                                                         depth=32)
-            self.temp_painting_surface.fill(pygame.Color(self.colour.r,
-                                                         self.colour.g,
-                                                         self.colour.b,
+            self.temp_painting_surface.fill(pygame.Color(self.option_data['palette_colour'].r,
+                                                         self.option_data['palette_colour'].g,
+                                                         self.option_data['palette_colour'].b,
                                                          0))
             self.opacity_surface = pygame.Surface(canvas_surface.get_size(),
                                                   flags=pygame.SRCALPHA,
                                                   depth=32)
-            self.opacity_surface.fill(pygame.Color(255, 255, 255, self.opacity))
+            self.opacity_surface.fill(pygame.Color(255, 255, 255, self.option_data['opacity']))
             new_rect = pygame.Rect((0, 0), self.image.get_size())
             new_rect.center = new_position
             self.new_rects_to_blit.append(new_rect)
@@ -94,49 +97,50 @@ class BrushTool:
 
         self.center_position = new_position
 
-    def set_colour(self, colour):
-        self.colour = colour
-        self._redraw_brush()
-
-    def set_opacity(self, opacity):
-        self.opacity = opacity
-        self._redraw_brush()
-
-    def set_size(self, size):
-        self.brush_size = size
-        self._redraw_brush()
+    def set_option(self, option_id, value):
+        if option_id in self.option_data:
+            self.option_data[option_id] = value
+            self._redraw_brush()
 
     def _redraw_brush(self):
         padding = 8
-        self.image = pygame.Surface((self.brush_size+padding,
-                                     self.brush_size+padding),
+        self.image = pygame.Surface((self.option_data['brush_size']+padding,
+                                     self.option_data['brush_size']+padding),
                                     flags=pygame.SRCALPHA,
                                     depth=32)
 
-        aa_brush_size = self.brush_size * self.brush_aa_amount
+        aa_brush_size = self.option_data['brush_size'] * self.brush_aa_amount
         aa_padding = padding * self.brush_aa_amount
         aa_surface = pygame.Surface((aa_brush_size+aa_padding,
                                      aa_brush_size+aa_padding),
                                     flags=pygame.SRCALPHA, depth=32)
-        aa_surface.fill(pygame.Color(self.colour.r, self.colour.g, self.colour.b, 0))
+        aa_surface.fill(pygame.Color(self.option_data['palette_colour'].r,
+                                     self.option_data['palette_colour'].g,
+                                     self.option_data['palette_colour'].b, 0))
         pygame.draw.circle(aa_surface,
-                           pygame.Color(self.colour.r, self.colour.g, self.colour.b, 85),
+                           pygame.Color(self.option_data['palette_colour'].r,
+                                        self.option_data['palette_colour'].g,
+                                        self.option_data['palette_colour'].b, 85),
                            (int((aa_brush_size + aa_padding) / 2),
                             int((aa_brush_size + aa_padding) / 2)),
                            int(aa_brush_size / 2) + int(self.brush_aa_amount * 0.5))
         pygame.draw.circle(aa_surface,
-                           pygame.Color(self.colour.r, self.colour.g, self.colour.b, 175),
+                           pygame.Color(self.option_data['palette_colour'].r,
+                                        self.option_data['palette_colour'].g,
+                                        self.option_data['palette_colour'].b, 175),
                            (int((aa_brush_size + aa_padding) / 2),
                             int((aa_brush_size + aa_padding) / 2)),
                            int(aa_brush_size / 2))
         pygame.draw.circle(aa_surface,
-                           pygame.Color(self.colour.r, self.colour.g, self.colour.b, 255),
+                           pygame.Color(self.option_data['palette_colour'].r,
+                                        self.option_data['palette_colour'].g,
+                                        self.option_data['palette_colour'].b, 255),
                            (int((aa_brush_size + aa_padding) / 2),
                             int((aa_brush_size + aa_padding) / 2)),
                            int(aa_brush_size / 2) - int(self.brush_aa_amount * 0.5))
         pygame.transform.smoothscale(aa_surface,
-                                     (self.brush_size+padding,
-                                      self.brush_size+padding),
+                                     (self.option_data['brush_size']+padding,
+                                      self.option_data['brush_size']+padding),
                                      self.image)
 
     @staticmethod
@@ -200,4 +204,3 @@ class BrushTool:
             d = d + 2 * dx
 
         return plot_points
-
