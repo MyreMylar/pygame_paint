@@ -58,7 +58,7 @@ class ToolBarWindow(pygame_gui.elements.UIWindow):
         self.palette_colour = pygame.Color(255,255,255,255)
         self.brush_size = 16
         self.opacity = 255
-        self.threshold = 0.3
+        self.threshold = 0.1
 
         # starting tool
         self.active_tool = BrushTool(self.palette_colour, self.opacity, self.brush_size)
@@ -259,6 +259,5 @@ class ToolBarWindow(pygame_gui.elements.UIWindow):
                 event.ui_object_id == '#tool_bar_window.#threshold_slider'):
             self.threshold = float(event.value)
             self.active_tool.set_option('threshold', self.threshold)
-            print(self.threshold)
 
         return False  # consumes nothing

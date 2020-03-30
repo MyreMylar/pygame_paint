@@ -23,10 +23,39 @@ class PygamePaintApp:
 
         self.ui_manager = UIManager(window_dimensions, theme_path='data/ui_theme.json')
 
-        menu_data = {'#file_menu': {'display_name': 'File'},
-                     '#edit_menu': {'display_name': 'Edit'},
-                     '#view_menu': {'display_name': 'View'},
-                     '#help_menu': {'display_name': 'Help'}}
+        menu_data = {'#file_menu': {'display_name': 'File',
+                                    'items':
+                                        {
+                                            '#new': {'display_name': 'New...'},
+                                            '#open': {'display_name': 'Open...'},
+                                            '#save': {'display_name': 'Save'},
+                                            '#save_as': {'display_name': 'Save As...'}
+                                        }
+                                    },
+                     '#edit_menu': {'display_name': 'Edit',
+                                    'items':
+                                        {
+                                            '#undo': {'display_name': 'Undo'},
+                                            '#redo': {'display_name': 'Redo'},
+                                            '#cut': {'display_name': 'Cut'},
+                                            '#copy': {'display_name': 'Copy'},
+                                            '#paste': {'display_name': 'Paste'}
+                                        }
+                                    },
+                     '#view_menu': {'display_name': 'View',
+                                    'items':
+                                        {
+                                            '#info': {'display_name': 'Image info'}
+                                        }
+                                    },
+                     '#help_menu': {'display_name': 'Help',
+                                    'items':
+                                        {
+                                            '#documentation': {'display_name': 'Documentation'},
+                                            '#about': {'display_name': 'About'}
+                                        }
+                                    }
+                     }
         self.menu_bar = UIMenuBar(relative_rect=pygame.Rect(0, 0, 1280, 25),
                                   menu_item_data=menu_data,
                                   manager=self.ui_manager)

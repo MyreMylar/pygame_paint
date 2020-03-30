@@ -1,11 +1,13 @@
 from typing import Union, Dict, Tuple
 
 import pygame
+import pygame_gui
 
 from pygame_gui.core.interfaces import IContainerLikeInterface, IUIManagerInterface
 from pygame_gui.core import UIElement, UIContainer
 from pygame_gui.core.drawable_shapes import RectDrawableShape
 from pygame_gui.elements.ui_button import UIButton
+from pygame_gui.elements.ui_selection_list import UISelectionList
 
 
 class UIMenuBar(UIElement):
@@ -37,6 +39,9 @@ class UIMenuBar(UIElement):
         self.border_colour = None
         self.shape_type = 'rectangle'
 
+        self.open_menu = None
+        self._selected_menu_bar_button = None
+
         self.rebuild_from_changed_theme_data()
 
         container_rect = pygame.Rect(self.relative_rect.left +
@@ -65,8 +70,17 @@ class UIMenuBar(UIElement):
                      text=menu_item_data['display_name'],
                      manager=self.ui_manager,
                      container=self.menu_bar_container,
+                     object_id=menu_item_key,
                      parent_element=self)
             top_level_button_x += item_text_size[0]+10
+
+    def unfocus(self):
+        if self.open_menu is not None:
+            self.open_menu.kill()
+            self.open_menu = None
+        if self._selected_menu_bar_button is not None:
+            self._selected_menu_bar_button.unselect()
+            self._selected_menu_bar_button = None
 
     def update(self, time_delta: float):
         """
@@ -102,8 +116,54 @@ class UIMenuBar(UIElement):
 
             if self.hover_point(scaled_mouse_pos[0], scaled_mouse_pos[1]):
                 consumed_event = True
+            # else:
+            #     self.unfocus()
+
+        if (event.type == pygame.USEREVENT and
+                event.user_type == pygame_gui.UI_BUTTON_PRESSED and
+                event.ui_element in self.menu_bar_container.elements):
+            if self._selected_menu_bar_button is not None:
+                self._selected_menu_bar_button.unselect()
+            self._selected_menu_bar_button = event.ui_element
+            self._selected_menu_bar_button.select()
+            self._open_top_level_menu(event)
+
+        if (event.type == pygame.USEREVENT and
+                event.user_type == pygame_gui.UI_BUTTON_ON_HOVERED and
+                self.open_menu is not None and
+                event.ui_element in self.menu_bar_container.elements):
+            if self._selected_menu_bar_button is not None:
+                self._selected_menu_bar_button.unselect()
+            self._selected_menu_bar_button = event.ui_element
+            self._selected_menu_bar_button.select()
+            self._open_top_level_menu(event)
 
         return consumed_event
+
+    def _open_top_level_menu(self, event):
+        # kill any open menus
+        if self.open_menu is not None:
+            self.open_menu.kill()
+        # open this menu
+        menu_key = event.ui_object_id.split('.')[-1]
+        menu_size = ((len(self.menu_item_data[menu_key]['items']) * 20) +
+                     (2 * (0 + 1)))
+        item_data = [
+            (item_data['display_name'], item_key)
+            for item_key, item_data in self.menu_item_data[menu_key][
+                'items'
+            ].items()
+        ]
+        menu_rect = pygame.Rect(0, 0, 200, menu_size)
+        menu_rect.topleft = event.ui_element.rect.bottomleft
+        top_ui_layer = self.ui_manager.get_sprite_group().get_top_layer()
+        self.open_menu = UISelectionList(relative_rect=menu_rect,
+                                         item_list=item_data,
+                                         manager=self.ui_manager,
+                                         starting_height=top_ui_layer,
+                                         parent_element=self,
+                                         object_id='#menu_bar_selection_list')
+        self.ui_manager.set_focus_element(self)
 
     def kill(self):
         """
@@ -194,7 +254,7 @@ class UIMenuBar(UIElement):
             self.shape_type = shape_type_string
             has_any_changed = True
 
-        if self._check_shape_theming_changed(defaults={'border_width': 0,
+        if self._check_shape_theming_changed(defaults={'border_width': 1,
                                                        'shadow_width': 0,
                                                        'shape_corner_radius': 0}):
             has_any_changed = True

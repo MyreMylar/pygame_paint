@@ -7,6 +7,21 @@
             "border_width": "0"
         }
     },
+    "menu_bar.#menu_bar_selection_list":
+    {
+        "misc":
+        {
+            "shadow_width": "0"
+        }
+    },
+    "menu_bar.#menu_bar_selection_list.button":
+    {
+        "misc":
+        {
+            "text_horiz_alignment": "left",
+            "text_horiz_alignment_padding": "5"
+        }
+    },
     "#tool_options_header_label":
     {
         "font":
