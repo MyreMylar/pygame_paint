@@ -13,8 +13,8 @@ class BrushTool:
         self.brush_aa_amount = 4
         self.center_position = (0, 0)
         self.start_painting = False
-        self.stop_painting = False
         self.painting = False
+        self.painted_area = None
         self.new_rects_to_blit = []
 
         self.temp_painting_surface = None
@@ -23,9 +23,11 @@ class BrushTool:
 
         self.image = None
 
+        self.active_canvas = None
+
         self._redraw_brush()
 
-    def process_event(self, event, canvas, mouse_pos):
+    def process_canvas_event(self, event, canvas, mouse_pos):
         consumed_event = False
         mouse_x = mouse_pos[0]
         mouse_y = mouse_pos[1]
@@ -35,65 +37,90 @@ class BrushTool:
                 if not self.painting:
                     self.start_painting = True
                     consumed_event = True
+        return consumed_event
+
+    def process_event(self, event):
+        consumed_event = False
         if event.type == pygame.MOUSEBUTTONUP and event.button == 1:
             if self.painting:
-                self.stop_painting = True
+                self.painting = False
+
+                self.temp_painting_surface = None
+                self.opacity_surface = None
+                self.pre_painting_surface = None
+                self.painted_area = None
 
         return consumed_event
 
-    def update(self, time_delta, canvas_surface, canvas_position):
+    def update(self, time_delta, canvas_surface, canvas_position, canvas):
         new_position = pygame.mouse.get_pos()
 
         if self.start_painting:
             self.start_painting = False
+            self.center_position = new_position
             self.pre_painting_surface = canvas_surface.copy()
-            self.temp_painting_surface = pygame.Surface(canvas_surface.get_size(),
-                                                        flags=pygame.SRCALPHA,
-                                                        depth=32)
-            self.temp_painting_surface.fill(pygame.Color(self.option_data['palette_colour'].r,
-                                                         self.option_data['palette_colour'].g,
-                                                         self.option_data['palette_colour'].b,
-                                                         0))
-            self.opacity_surface = pygame.Surface(canvas_surface.get_size(),
-                                                  flags=pygame.SRCALPHA,
-                                                  depth=32)
-            self.opacity_surface.fill(pygame.Color(255, 255, 255, self.option_data['opacity']))
-            new_rect = pygame.Rect((0, 0), self.image.get_size())
-            new_rect.center = new_position
-            self.new_rects_to_blit.append(new_rect)
-            self.painting = True
 
-        if self.stop_painting:
-            self.stop_painting = False
-            self.painting = False
-            canvas_surface.blit(self.pre_painting_surface, (0, 0))
-            self.temp_painting_surface.blit(self.opacity_surface, (0, 0),
-                                            special_flags=pygame.BLEND_RGBA_MULT)
-            canvas_surface.blit(self.temp_painting_surface, (0, 0))
-            self.temp_painting_surface = None
-            self.opacity_surface = None
-            self.pre_painting_surface = None
+            self.painted_area = pygame.Rect((0, 0), self.image.get_size())
+            self.painted_area.center = new_position
+
+            self.new_rects_to_blit.append(self.painted_area.copy())
+            self.painting = True
 
         if self.painting:
             # use line algorithm to generate series of points between the two
             # turn the points into rects and store them
+
             point_set = BrushTool._plot_line(self.center_position, new_position)
-            for point in point_set:
-                new_rect = pygame.Rect((0, 0), self.image.get_size())
-                new_rect.center = point
-                self.new_rects_to_blit.append(new_rect)
+            point_set.add(new_position)
+            if len(point_set) > 0:
+                if self.center_position in point_set:
+                    point_set.remove(self.center_position)
+                for point in point_set:
+                    if canvas.hover_point(point[0], point[1]):
+                        new_rect = pygame.Rect((0, 0), self.image.get_size())
+                        new_rect.center = point
+                        self.new_rects_to_blit.append(new_rect)
+
+                new_painted_area_rect = self.painted_area.unionall(self.new_rects_to_blit)
+            else:
+                new_painted_area_rect = self.painted_area
+
+            new_temp_painting_surface = pygame.Surface(new_painted_area_rect.size,
+                                                       flags=pygame.SRCALPHA,
+                                                       depth=32)
+            new_temp_painting_surface.fill(pygame.Color(self.option_data['palette_colour'].r,
+                                                        self.option_data['palette_colour'].g,
+                                                        self.option_data['palette_colour'].b,
+                                                        0))
+            if self.temp_painting_surface is not None:
+                new_temp_painting_surface.blit(self.temp_painting_surface,
+                                               (self.painted_area.left - new_painted_area_rect.left,
+                                                self.painted_area.top - new_painted_area_rect.top))
+
+            self.painted_area = new_painted_area_rect
+            self.temp_painting_surface = new_temp_painting_surface
+
+            self.opacity_surface = pygame.Surface(self.painted_area.size,
+                                                  flags=pygame.SRCALPHA,
+                                                  depth=32)
+            self.opacity_surface.fill(pygame.Color(255, 255, 255, self.option_data['opacity']))
 
             for blit_rect in self.new_rects_to_blit:
-                blit_rect.left -= canvas_position[0]
-                blit_rect.top -= canvas_position[1]
+                blit_rect.left -= self.painted_area.left
+                blit_rect.top -= self.painted_area.top
                 self.temp_painting_surface.blit(self.image, blit_rect)
+
             self.new_rects_to_blit = []
 
             canvas_surface.blit(self.pre_painting_surface, (0, 0))
             pre_blend = self.temp_painting_surface.copy()
             pre_blend.blit(self.opacity_surface, (0, 0),
                            special_flags=pygame.BLEND_RGBA_MULT)
-            canvas_surface.blit(pre_blend, (0, 0))
+            final_blit_pos = (self.painted_area.left - canvas_position[0],
+                              self.painted_area.top - canvas_position[1])
+
+            canvas_surface.blit(pre_blend, final_blit_pos)
+            canvas.set_image(canvas_surface)
 
         self.center_position = new_position
 

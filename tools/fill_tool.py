@@ -26,9 +26,11 @@ class FillTool:
 
         self.pre_painting_surf_blank_int_col = None
 
+        self.active_canvas = None
+
         self.clock = pygame.time.Clock()
 
-    def process_event(self, event, canvas, mouse_pos):
+    def process_canvas_event(self, event, canvas, mouse_pos):
         consumed_event = False
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             mouse_x = mouse_pos[0]
@@ -40,7 +42,10 @@ class FillTool:
 
         return consumed_event
 
-    def update(self, time_delta, canvas_surface, canvas_position):
+    def process_event(self, event):
+        return False
+
+    def update(self, time_delta, canvas_surface, canvas_position, canvas):
         if self.start_filling:
             self.start_filling = False
             self.start_fill_position = pygame.mouse.get_pos()
@@ -70,6 +75,8 @@ class FillTool:
             self.temp_painting_surface.blit(self.opacity_surface, (0, 0),
                                             special_flags=pygame.BLEND_RGBA_MULT)
             canvas_surface.blit(self.temp_painting_surface, (0, 0))
+
+            canvas.set_image(canvas_surface)
             self.temp_painting_surface = None
             self.opacity_surface = None
             self.pre_painting_surface = None
@@ -93,7 +100,7 @@ class FillTool:
     def _rect_fill_start(self, canvas_surface, x: int, y: int):
         pixel_array = pygame.PixelArray(self.temp_painting_surface)
         self._fill_colour = self.option_data['palette_colour']
-        self._fill_threshold = self.option_data['threshold']
+        self._fill_threshold = self.option_data['threshold'] * 195075
         self.pre_painting_surf_blank_int_col = pixel_array[0, 0]
         self._rect_fill(pixel_array, x, y, pixel_array.shape[0],
                         pixel_array.shape[1], canvas_surface)
@@ -170,7 +177,7 @@ class FillTool:
         if array[x, y] != self.pre_painting_surf_blank_int_col:
             return False
         pixel_colour = canvas_surface.get_at((x, y))
-        return (self.calc_distance_between_colours(pixel_colour, self.start_fill_colour) <
+        return (self.calc_cheap_distance_between_colours(pixel_colour, self.start_fill_colour) <
                 self._fill_threshold)
 
     @staticmethod
@@ -184,3 +191,10 @@ class FillTool:
         return (((2 + (red_param/256)) * sq_red_diff +
                 (4 * sq_green_diff) +
                 (2 + ((255 - red_param)/256)) * sq_blue_diff) ** 0.5) / 765.0
+
+    @staticmethod
+    def calc_cheap_distance_between_colours(colour_1, colour_2):
+        sq_red_diff = (colour_2.r - colour_1.r) ** 2
+        sq_green_diff = (colour_2.g - colour_1.g) ** 2
+        sq_blue_diff = (colour_2.b - colour_1.b) ** 2
+        return sq_red_diff + sq_green_diff + sq_blue_diff

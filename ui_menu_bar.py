@@ -20,10 +20,10 @@ class UIMenuBar(UIElement):
                  object_id: Union[str, None] = None,
                  anchors: Union[Dict[str, str], None] = None):
 
-        element_ids, object_ids = self.create_valid_ids(container=container,
-                                                        parent_element=parent,
-                                                        object_id=object_id,
-                                                        element_id='menu_bar')
+        element_ids, object_ids = self._create_valid_ids(container=container,
+                                                         parent_element=parent,
+                                                         object_id=object_id,
+                                                         element_id='menu_bar')
         super().__init__(relative_rect=relative_rect,
                          manager=manager,
                          container=container,
@@ -41,6 +41,8 @@ class UIMenuBar(UIElement):
 
         self.open_menu = None
         self._selected_menu_bar_button = None
+
+        self._close_open_menu = False
 
         self.rebuild_from_changed_theme_data()
 
@@ -116,11 +118,9 @@ class UIMenuBar(UIElement):
 
             if self.hover_point(scaled_mouse_pos[0], scaled_mouse_pos[1]):
                 consumed_event = True
-            # else:
-            #     self.unfocus()
 
         if (event.type == pygame.USEREVENT and
-                event.user_type == pygame_gui.UI_BUTTON_PRESSED and
+                event.user_type == pygame_gui.UI_BUTTON_START_PRESS and
                 event.ui_element in self.menu_bar_container.elements):
             if self._selected_menu_bar_button is not None:
                 self._selected_menu_bar_button.unselect()
@@ -162,7 +162,7 @@ class UIMenuBar(UIElement):
                                          manager=self.ui_manager,
                                          starting_height=top_ui_layer,
                                          parent_element=self,
-                                         object_id='#menu_bar_selection_list')
+                                         object_id=menu_key + '_items')
         self.ui_manager.set_focus_element(self)
 
     def kill(self):

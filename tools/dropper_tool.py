@@ -10,7 +10,9 @@ class DropperTool:
         self.start_dropper_position = None
         self.time_to_grab_colour = False
 
-    def process_event(self, event, canvas, mouse_pos):
+        self.active_canvas = None
+
+    def process_canvas_event(self, event, canvas, mouse_pos):
         consumed_event = False
         mouse_x = mouse_pos[0]
         mouse_y = mouse_pos[1]
@@ -23,7 +25,10 @@ class DropperTool:
 
         return consumed_event
 
-    def update(self, time_delta, canvas_surface, canvas_position):
+    def process_event(self, event):
+        return False
+
+    def update(self, time_delta, canvas_surface, canvas_position, canvas):
 
         if self.time_to_grab_colour:
             self.time_to_grab_colour = False

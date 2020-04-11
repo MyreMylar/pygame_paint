@@ -260,4 +260,24 @@ class ToolBarWindow(pygame_gui.elements.UIWindow):
             self.threshold = float(event.value)
             self.active_tool.set_option('threshold', self.threshold)
 
+        if self.active_tool is not None:
+            self.active_tool.process_event(event)
+
         return False  # consumes nothing
+
+    def update(self, time_delta: float):
+        super().update(time_delta)
+
+        if self.active_tool is not None and self.active_tool.active_canvas is not None:
+            mouse_pos = self.ui_manager.get_mouse_position()
+            if self.active_tool.active_canvas.hover_point(mouse_pos[0], mouse_pos[1]):
+                if self.active_tool.active_canvas.get_image_clipping_rect() is not None:
+                    self.active_tool.update(time_delta=time_delta,
+                                            canvas_surface=self.active_tool.active_canvas._pre_clipped_image,
+                                            canvas_position=self.active_tool.active_canvas.rect.topleft,
+                                            canvas=self.active_tool.active_canvas)
+                else:
+                    self.active_tool.update(time_delta=time_delta,
+                                            canvas_surface=self.active_tool.active_canvas.image,
+                                            canvas_position=self.active_tool.active_canvas.rect.topleft,
+                                            canvas=self.active_tool.active_canvas)

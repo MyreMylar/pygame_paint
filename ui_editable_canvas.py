@@ -1,3 +1,6 @@
+from typing import Union
+from pathlib import Path
+
 import pygame
 import pygame_gui
 
@@ -11,10 +14,10 @@ class EditableCanvas(pygame_gui.core.ui_element.UIElement):
                  object_id=None,
                  anchors=None):
 
-        element_ids, object_ids = self.create_valid_ids(container=container,
-                                                        parent_element=parent,
-                                                        object_id=object_id,
-                                                        element_id='editable_canvas')
+        element_ids, object_ids = self._create_valid_ids(container=container,
+                                                         parent_element=parent,
+                                                         object_id=object_id,
+                                                         element_id='editable_canvas')
         super().__init__(relative_rect=relative_rect,
                          manager=manager,
                          container=container,
@@ -24,9 +27,13 @@ class EditableCanvas(pygame_gui.core.ui_element.UIElement):
                          element_ids=element_ids,
                          anchors=anchors)
 
-        self.image = image_surface
+        self.set_image(image_surface)
 
         self.active_tool = None
+        self.save_file_path = None  # type: Union[Path, None]
+
+    def set_save_file_path(self, path):
+        self.save_file_path = path
 
     def set_active_tool(self, tool):
         self.active_tool = tool
@@ -41,16 +48,23 @@ class EditableCanvas(pygame_gui.core.ui_element.UIElement):
             self.set_active_tool(event.tool)
 
         if (self.active_tool is not None and
-                self.active_tool.process_event(event,
-                                               self,
-                                               self.ui_manager.get_mouse_position())):
+                self.active_tool.process_canvas_event(event,
+                                                      self,
+                                                      self.ui_manager.get_mouse_position())):
+            self.active_tool.active_canvas = self
             consumed_event = True
 
         return consumed_event
 
     def update(self, time_delta: float):
         super().update(time_delta)
-        self.active_tool.update(time_delta=time_delta,
-                                canvas_surface=self.image,
-                                canvas_position=self.rect.topleft)
+
+    def get_image(self) -> pygame.Surface:
+        """
+        :return: The complete image Surface without any clipping.
+        """
+        if self.get_image_clipping_rect() is not None:
+            return self._pre_clipped_image
+        else:
+            return self.image
 

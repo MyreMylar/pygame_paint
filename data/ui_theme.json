@@ -7,14 +7,14 @@
             "border_width": "0"
         }
     },
-    "menu_bar.#menu_bar_selection_list":
+    "menu_bar.selection_list":
     {
         "misc":
         {
             "shadow_width": "0"
         }
     },
-    "menu_bar.#menu_bar_selection_list.button":
+    "menu_bar.selection_list.button":
     {
         "misc":
         {
@@ -56,6 +56,154 @@
             "normal_image": {
                 "path": "data/dropper_button.png"
             }
+        }
+    },
+
+
+    "#file_dialog_icon_buttons":
+    {
+        "misc":
+        {
+            "shape": "rounded_rectangle",
+            "shape_corner_radius": "4",
+            "border_width": "1",
+            "shadow_width": "1",
+            "text_vert_alignment": "top",
+            "text_vert_alignment_padding": "-2"
+        }
+    },
+    "#open_file_dialog.#file_display_list.vertical_scroll_bar":
+    {
+        "misc":
+        {
+            "shape": "rectangle",
+            "border_width": "0",
+            "shadow_width": "0",
+            "enable_arrow_buttons": "0"
+        }
+    },
+    "#open_file_dialog.#file_display_list.vertical_scroll_bar.button":
+    {
+        "misc":
+        {
+            "shape": "rectangle",
+            "border_width": "1",
+            "shadow_width": "1"
+        }
+    },
+    "#open_file_dialog.#file_display_list.#file_list_item":
+    {
+        "colours":
+        {
+            "normal_bg": "#21282d"
+        },
+        "misc":
+        {
+            "shape": "rectangle",
+            "border_width": "0",
+            "shadow_width": "0",
+            "text_horiz_alignment": "left",
+            "text_horiz_alignment_padding": "5"
+        }
+    },
+    "#open_file_dialog.#file_display_list.#directory_list_item":
+    {
+        "prototype": "#no_frills_button",
+        "misc":
+        {
+            "text_horiz_alignment": "left",
+            "text_horiz_alignment_padding": "5"
+        }
+    },
+    "#open_file_dialog.#home_icon_button":
+    {
+        "prototype": "#file_dialog_icon_buttons"
+    },
+    "#open_file_dialog.#delete_icon_button":
+    {
+        "prototype": "#file_dialog_icon_buttons",
+        "misc":
+        {
+            "text_vert_alignment_padding": "-1"
+        }
+    },
+    "#open_file_dialog.#parent_icon_button":
+    {
+        "prototype": "#file_dialog_icon_buttons"
+    },
+    "#open_file_dialog.#refresh_icon_button":
+    {
+        "prototype": "#file_dialog_icon_buttons",
+        "misc":
+        {
+            "text_vert_alignment_padding": "1"
+        }
+    },
+    "#save_file_dialog.#file_display_list.vertical_scroll_bar":
+    {
+        "misc":
+        {
+            "shape": "rectangle",
+            "border_width": "0",
+            "shadow_width": "0",
+            "enable_arrow_buttons": "0"
+        }
+    },
+    "#save_file_dialog.#file_display_list.vertical_scroll_bar.button":
+    {
+        "misc":
+        {
+            "shape": "rectangle",
+            "border_width": "1",
+            "shadow_width": "1"
+        }
+    },
+    "#save_file_dialog.#file_display_list.#file_list_item":
+    {
+        "colours":
+        {
+            "normal_bg": "#21282d"
+        },
+        "misc":
+        {
+            "shape": "rectangle",
+            "border_width": "0",
+            "shadow_width": "0",
+            "text_horiz_alignment": "left",
+            "text_horiz_alignment_padding": "5"
+        }
+    },
+    "#save_file_dialog.#file_display_list.#directory_list_item":
+    {
+        "prototype": "#no_frills_button",
+        "misc":
+        {
+            "text_horiz_alignment": "left",
+            "text_horiz_alignment_padding": "5"
+        }
+    },
+    "#save_file_dialog.#home_icon_button":
+    {
+        "prototype": "#file_dialog_icon_buttons"
+    },
+    "#save_file_dialog.#delete_icon_button":
+    {
+        "prototype": "#file_dialog_icon_buttons",
+        "misc":
+        {
+            "text_vert_alignment_padding": "-1"
+        }
+    },
+    "#save_file_dialog.#parent_icon_button":
+    {
+        "prototype": "#file_dialog_icon_buttons"
+    },
+    "#save_file_dialog.#refresh_icon_button":
+    {
+        "prototype": "#file_dialog_icon_buttons",
+        "misc":
+        {
+            "text_vert_alignment_padding": "1"
         }
     }
 }
