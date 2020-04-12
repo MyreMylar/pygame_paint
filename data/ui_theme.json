@@ -205,5 +205,15 @@
         {
             "text_vert_alignment_padding": "1"
         }
+    },
+
+    "#small_header_label":
+    {
+        "font":
+        {
+            "name": "fira_code",
+            "size": "14",
+            "bold": "1"
+        }
     }
 }

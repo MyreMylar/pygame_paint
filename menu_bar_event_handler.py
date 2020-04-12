@@ -1,4 +1,4 @@
-from typing import Union
+from typing import Union, List
 from pathlib import Path
 
 import pygame
@@ -7,7 +7,9 @@ from pygame_gui.windows import UIFileDialog, UIMessageWindow
 from pygame_gui import UI_BUTTON_START_PRESS, UI_WINDOW_MOVED_TO_FRONT, UI_WINDOW_CLOSE
 from pygame_gui import UI_FILE_DIALOG_PATH_PICKED
 
-from ui_canvas_window import CanvasWindow
+from ui.ui_canvas_window import CanvasWindow
+from ui.ui_new_canvas_dialog import UINewCanvasDialog
+from tools.undo_record import UndoRecord
 
 
 class MenuBarEventHandler:
@@ -30,6 +32,14 @@ class MenuBarEventHandler:
                 and event.ui_object_id == '#canvas_window'
                 and self.active_canvas_window == event.ui_element):
             self.active_canvas_window = None
+
+        if (event.type == pygame.USEREVENT
+                and event.user_type == UI_BUTTON_START_PRESS
+                and event.ui_object_id == 'menu_bar.#file_menu_items.#new'):
+            new_canvas_dialog = pygame.Rect(0, 0, 400, 300)
+            new_canvas_dialog.center = self.window_surface.get_rect().center
+            UINewCanvasDialog(rect=new_canvas_dialog,
+                              manager=self.ui_manager)
 
         if (event.type == pygame.USEREVENT
                 and event.user_type == UI_BUTTON_START_PRESS
@@ -71,13 +81,26 @@ class MenuBarEventHandler:
             if self.active_canvas_window.canvas_ui.save_file_path is not None:
                 file_path = self.active_canvas_window.canvas_ui.save_file_path
             else:
-                file_path = Path(self.last_used_file_path) / self.active_canvas_window.window_display_title
+                file_path = (Path(self.last_used_file_path) /
+                             self.active_canvas_window.window_display_title)
             save_dialog = UIFileDialog(rect=file_dialog_rect,
                                        manager=self.ui_manager,
                                        window_title="Save As...",
                                        initial_file_path=str(file_path),
                                        object_id='#save_file_dialog')
             save_dialog.set_blocking(True)
+
+        if (event.type == pygame.USEREVENT
+                and event.user_type == UI_BUTTON_START_PRESS
+                and event.ui_object_id == 'menu_bar.#edit_menu_items.#undo'
+                and self.active_canvas_window is not None):
+            self._try_undo()
+
+        if (event.type == pygame.USEREVENT
+                and event.user_type == UI_BUTTON_START_PRESS
+                and event.ui_object_id == 'menu_bar.#edit_menu_items.#redo'
+                and self.active_canvas_window is not None):
+            self._try_redo()
 
         if (event.type == pygame.USEREVENT
                 and event.user_type == UI_BUTTON_START_PRESS
@@ -137,3 +160,38 @@ class MenuBarEventHandler:
                                                  manager=self.ui_manager,
                                                  window_title='Saving error')
                 message_window.set_blocking(True)
+
+        if (event.type == pygame.KEYDOWN and event.key == pygame.K_z
+                and event.mod & pygame.KMOD_CTRL):
+            if event.mod & pygame.KMOD_SHIFT:
+                self._try_redo()
+            else:
+                self._try_undo()
+
+    def _try_undo(self):
+        if (self.active_canvas_window is not None
+                and self.active_canvas_window.canvas_ui.undo_stack):
+            undo_record = self.active_canvas_window.canvas_ui.undo_stack.pop()
+
+            redo_surf = pygame.Surface(undo_record.rect.size,
+                                       flags=pygame.SRCALPHA)
+            redo_surf.blit(self.active_canvas_window.canvas_ui.get_image(),
+                           (0, 0), undo_record.rect)
+            redo_record = UndoRecord(redo_surf, undo_record.rect.copy())
+            self.active_canvas_window.canvas_ui.redo_stack.append(redo_record)
+            self.active_canvas_window.canvas_ui.get_image().blit(undo_record.image,
+                                                                 undo_record.rect)
+
+    def _try_redo(self):
+        if (self.active_canvas_window is not None
+                and self.active_canvas_window.canvas_ui.redo_stack):
+            redo_record = self.active_canvas_window.canvas_ui.redo_stack.pop()
+            undo_surf = pygame.Surface(redo_record.rect.size,
+                                       flags=pygame.SRCALPHA)
+            undo_surf.blit(self.active_canvas_window.canvas_ui.get_image(),
+                           (0, 0), redo_record.rect)
+            undo_record = UndoRecord(undo_surf, redo_record.rect.copy())
+            self.active_canvas_window.canvas_ui.undo_stack.append(undo_record)
+
+            self.active_canvas_window.canvas_ui.get_image().blit(redo_record.image,
+                                                                 redo_record.rect)

@@ -1,8 +1,10 @@
-from typing import Union
+from typing import Union, List
 from pathlib import Path
 
 import pygame
 import pygame_gui
+
+from tools.undo_record import UndoRecord
 
 
 class EditableCanvas(pygame_gui.core.ui_element.UIElement):
@@ -31,6 +33,9 @@ class EditableCanvas(pygame_gui.core.ui_element.UIElement):
 
         self.active_tool = None
         self.save_file_path = None  # type: Union[Path, None]
+
+        self.undo_stack = []  # type: List[Union[UndoRecord, None]]
+        self.redo_stack = []  # type: List[Union[UndoRecord, None]]
 
     def set_save_file_path(self, path):
         self.save_file_path = path

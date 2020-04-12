@@ -1,5 +1,7 @@
 import pygame
 
+from tools.undo_record import UndoRecord
+
 
 class BrushTool:
 
@@ -15,6 +17,7 @@ class BrushTool:
         self.start_painting = False
         self.painting = False
         self.painted_area = None
+        self.relative_painted_area = None
         self.new_rects_to_blit = []
 
         self.temp_painting_surface = None
@@ -45,10 +48,22 @@ class BrushTool:
             if self.painting:
                 self.painting = False
 
+                if self.active_canvas is not None:
+                    undo_surf = pygame.Surface(self.relative_painted_area.size,
+                                               flags=pygame.SRCALPHA)
+                    undo_surf.blit(self.pre_painting_surface,
+                                   (0, 0), self.relative_painted_area)
+                    self.active_canvas.undo_stack.append(UndoRecord(undo_surf,
+                                                                    self.relative_painted_area))
+                    self.active_canvas.redo_stack.clear()
+                    if len(self.active_canvas.undo_stack) > 25:
+                        self.active_canvas.undo_stack.pop(0)
+
                 self.temp_painting_surface = None
                 self.opacity_surface = None
                 self.pre_painting_surface = None
                 self.painted_area = None
+                self.relative_painted_area = None
 
         return consumed_event
 
@@ -116,10 +131,12 @@ class BrushTool:
             pre_blend = self.temp_painting_surface.copy()
             pre_blend.blit(self.opacity_surface, (0, 0),
                            special_flags=pygame.BLEND_RGBA_MULT)
-            final_blit_pos = (self.painted_area.left - canvas_position[0],
-                              self.painted_area.top - canvas_position[1])
 
-            canvas_surface.blit(pre_blend, final_blit_pos)
+            self.relative_painted_area = self.painted_area.copy()
+            self.relative_painted_area.topleft = (self.painted_area.left - canvas_position[0],
+                                                  self.painted_area.top - canvas_position[1])
+
+            canvas_surface.blit(pre_blend, self.relative_painted_area)
             canvas.set_image(canvas_surface)
 
         self.center_position = new_position

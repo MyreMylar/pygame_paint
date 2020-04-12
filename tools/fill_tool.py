@@ -1,5 +1,6 @@
 import pygame
 
+from tools.undo_record import UndoRecord
 
 class FillTool:
 
@@ -39,6 +40,13 @@ class FillTool:
             if canvas.hover_point(mouse_x, mouse_y) and not self.filling:
                 self.start_filling = True
                 consumed_event = True
+
+                undo_surf = canvas.get_image().copy()
+
+                canvas.undo_stack.append(UndoRecord(undo_surf, undo_surf.get_rect()))
+                canvas.redo_stack.clear()
+                if len(canvas.undo_stack) > 25:
+                    canvas.undo_stack.pop(0)
 
         return consumed_event
 

@@ -1,7 +1,7 @@
 import pygame
 import pygame_gui
 
-from ui_editable_canvas import EditableCanvas
+from ui.ui_editable_canvas import EditableCanvas
 from pygame_gui.elements.ui_scrolling_container import UIScrollingContainer
 
 

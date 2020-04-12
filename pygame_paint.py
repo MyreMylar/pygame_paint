@@ -6,9 +6,9 @@ import pygame_gui
 from pygame_gui import UIManager
 from pygame_gui.windows import UIMessageWindow
 
-from ui_canvas_window import CanvasWindow
-from ui_tool_bar_window import ToolBarWindow
-from ui_menu_bar import UIMenuBar
+from ui.ui_canvas_window import CanvasWindow
+from ui.ui_tool_bar_window import ToolBarWindow
+from ui.ui_menu_bar import UIMenuBar
 
 from menu_bar_event_handler import MenuBarEventHandler
 
@@ -66,17 +66,6 @@ class PygamePaintApp:
         self.tool_bar_window = ToolBarWindow(pygame.Rect(0, 25, 200, 695),
                                              manager=self.ui_manager)
 
-        new_canvas = pygame.Surface((1024, 1024), flags=pygame.SRCALPHA, depth=32)
-        new_canvas.fill(pygame.Color(100, 100, 100, 255))
-        canvas_window_rect = pygame.Rect(0, 0, 640, 480)
-        canvas_window_rect.center = (640, 360)
-        canvas_window = CanvasWindow(rect=canvas_window_rect,
-                                     manager=self.ui_manager,
-                                     image_file_name='untitled.png',
-                                     image=new_canvas)
-
-        canvas_window.canvas_ui.set_active_tool(self.tool_bar_window.get_active_tool())
-
         self.clock = pygame.time.Clock()
         self.running = True
 
@@ -104,13 +93,13 @@ class PygamePaintApp:
                                                          min(loaded_image.get_height() + 82,
                                                              self.window_surface.get_height() - 25))
 
-                        new_canvas_window = CanvasWindow(rect=canvas_window_rect,
-                                                         manager=self.ui_manager,
-                                                         image_file_name=path.name,
-                                                         image=loaded_image)
+                        window = CanvasWindow(rect=canvas_window_rect,
+                                              manager=self.ui_manager,
+                                              image_file_name=path.name,
+                                              image=loaded_image)
 
-                        new_canvas_window.canvas_ui.set_active_tool(self.tool_bar_window.get_active_tool())
-                        new_canvas_window.canvas_ui.set_save_file_path(path)
+                        window.canvas_ui.set_active_tool(self.tool_bar_window.get_active_tool())
+                        window.canvas_ui.set_save_file_path(path)
 
                     except pygame.error:
                         message_rect = pygame.Rect(0, 0, 250, 160)
@@ -120,6 +109,24 @@ class PygamePaintApp:
                                                          manager=self.ui_manager,
                                                          window_title='Loading error')
                         message_window.set_blocking(True)
+
+                if event.type == pygame.USEREVENT and event.user_type == 'create_new_canvas':
+
+                    new_canvas = pygame.Surface(event.size, flags=pygame.SRCALPHA, depth=32)
+                    new_canvas.fill(event.colour)
+                    canvas_window_rect = pygame.Rect(200, 25,
+                                                     min(new_canvas.get_width() + 52,
+                                                         self.window_surface.get_width() - 200),
+                                                     min(new_canvas.get_height() + 82,
+                                                         self.window_surface.get_height() - 25))
+                    canvas_window = CanvasWindow(rect=canvas_window_rect,
+                                                 manager=self.ui_manager,
+                                                 image_file_name='untitled.png',
+                                                 image=new_canvas)
+
+                    canvas_window.canvas_ui.set_active_tool(self.tool_bar_window.get_active_tool())
+
+
 
                 self.ui_manager.process_events(event)
 
