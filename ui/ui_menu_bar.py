@@ -20,18 +20,17 @@ class UIMenuBar(UIElement):
                  object_id: Union[str, None] = None,
                  anchors: Union[Dict[str, str], None] = None):
 
-        element_ids, object_ids = self._create_valid_ids(container=container,
-                                                         parent_element=parent,
-                                                         object_id=object_id,
-                                                         element_id='menu_bar')
         super().__init__(relative_rect=relative_rect,
                          manager=manager,
                          container=container,
                          starting_height=1,
                          layer_thickness=1,
-                         object_ids=object_ids,
-                         element_ids=element_ids,
                          anchors=anchors)
+
+        self._create_valid_ids(container=container,
+                               parent_element=parent,
+                               object_id=object_id,
+                               element_id='menu_bar')
 
         self.menu_item_data = menu_item_data
 
@@ -233,22 +232,20 @@ class UIMenuBar(UIElement):
         """
         has_any_changed = False
 
-        background_colour = self.ui_theme.get_colour_or_gradient(self.object_ids,
-                                                                 self.element_ids,
-                                                                 'normal_bg')
+        background_colour = self.ui_theme.get_colour_or_gradient('normal_bg',
+                                                                 self.combined_element_ids)
         if background_colour != self.background_colour:
             self.background_colour = background_colour
             has_any_changed = True
 
-        border_colour = self.ui_theme.get_colour_or_gradient(self.object_ids,
-                                                             self.element_ids,
-                                                             'normal_border')
+        border_colour = self.ui_theme.get_colour_or_gradient('normal_border',
+                                                             self.combined_element_ids)
         if border_colour != self.border_colour:
             self.border_colour = border_colour
             has_any_changed = True
 
         # misc
-        shape_type_string = self.ui_theme.get_misc_data(self.object_ids, self.element_ids, 'shape')
+        shape_type_string = self.ui_theme.get_misc_data('shape', self.combined_element_ids)
         if (shape_type_string is not None and shape_type_string in ['rectangle'] and
                 shape_type_string != self.shape_type):
             self.shape_type = shape_type_string

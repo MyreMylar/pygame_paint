@@ -131,7 +131,7 @@ class MenuBarEventHandler:
             UIMessageWindow(rect=about_window_rect,
                             html_message='<br><b>Pygame Paint</b><br>'
                                          '---------------<br><br>'
-                                         '<b>Version: </b>1.0.0<br>'
+                                         '<b>Version: </b>1.0.1<br>'
                                          '<b>Created by: </b>Dan Lawrence<br>'
                                          '<b>Copyright: </b>© 2020, Robotic Shed<br>',
                             manager=self.ui_manager,

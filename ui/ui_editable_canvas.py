@@ -16,18 +16,17 @@ class EditableCanvas(pygame_gui.core.ui_element.UIElement):
                  object_id=None,
                  anchors=None):
 
-        element_ids, object_ids = self._create_valid_ids(container=container,
-                                                         parent_element=parent,
-                                                         object_id=object_id,
-                                                         element_id='editable_canvas')
         super().__init__(relative_rect=relative_rect,
                          manager=manager,
                          container=container,
                          starting_height=1,
                          layer_thickness=1,
-                         object_ids=object_ids,
-                         element_ids=element_ids,
                          anchors=anchors)
+
+        self._create_valid_ids(container=container,
+                               parent_element=parent,
+                               object_id=object_id,
+                               element_id='editable_canvas')
 
         self.set_image(image_surface)
 

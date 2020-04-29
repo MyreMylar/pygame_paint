@@ -1,4 +1,14 @@
 {
+    "menu_bar":
+    {
+        "misc":
+        {
+            "shape": "rectangle",
+            "shadow_width": "0",
+            "border_width": "1",
+            "shape_corner_radius": "2"
+        }
+    },
     "menu_bar.button":
     {
         "misc":

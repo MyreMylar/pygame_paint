@@ -18,7 +18,7 @@ class PygamePaintApp:
         pygame.init()
 
         pygame.display.set_caption("Pygame Paint")
-        window_dimensions = (1280, 720)
+        window_dimensions = (1024, 576)
         self.window_surface = pygame.display.set_mode(window_dimensions)
         title_bar_icon = pygame.image.load('data/paint_icon.png')
         pygame.display.set_icon(title_bar_icon)
