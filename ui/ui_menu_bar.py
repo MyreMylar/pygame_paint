@@ -63,17 +63,17 @@ class UIMenuBar(UIElement):
         for menu_item_key, menu_item_data in self.menu_item_data.items():
             # create top level menu buttons
             default_font = self.ui_manager.get_theme().get_font_dictionary().get_default_font()
-            item_text_size = default_font.size(menu_item_data['display_name'])
+            _, item_text_rect = default_font.render(menu_item_data['display_name'], (0, 0, 0))
             UIButton(pygame.Rect(top_level_button_x,
                                  0,
-                                 item_text_size[0]+10,
+                                 item_text_rect.width + 20,
                                  self.menu_bar_container.rect.height),
                      text=menu_item_data['display_name'],
                      manager=self.ui_manager,
                      container=self.menu_bar_container,
                      object_id=menu_item_key,
                      parent_element=self)
-            top_level_button_x += item_text_size[0]+10
+            top_level_button_x += item_text_rect.width + 20
 
     def unfocus(self):
         if self.open_menu is not None:
@@ -118,8 +118,7 @@ class UIMenuBar(UIElement):
             if self.hover_point(scaled_mouse_pos[0], scaled_mouse_pos[1]):
                 consumed_event = True
 
-        if (event.type == pygame.USEREVENT and
-                event.user_type == pygame_gui.UI_BUTTON_START_PRESS and
+        if (event.type == pygame_gui.UI_BUTTON_START_PRESS and
                 event.ui_element in self.menu_bar_container.elements):
             if self._selected_menu_bar_button is not None:
                 self._selected_menu_bar_button.unselect()
@@ -127,8 +126,7 @@ class UIMenuBar(UIElement):
             self._selected_menu_bar_button.select()
             self._open_top_level_menu(event)
 
-        if (event.type == pygame.USEREVENT and
-                event.user_type == pygame_gui.UI_BUTTON_ON_HOVERED and
+        if (event.type == pygame_gui.UI_BUTTON_ON_HOVERED and
                 self.open_menu is not None and
                 event.ui_element in self.menu_bar_container.elements):
             if self._selected_menu_bar_button is not None:
@@ -162,7 +160,7 @@ class UIMenuBar(UIElement):
                                          starting_height=top_ui_layer,
                                          parent_element=self,
                                          object_id=menu_key + '_items')
-        self.ui_manager.set_focus_element(self)
+        self.ui_manager.set_focus_set(self)
 
     def kill(self):
         """

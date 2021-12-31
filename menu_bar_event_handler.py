@@ -23,26 +23,22 @@ class MenuBarEventHandler:
         self.active_canvas_window = None  # type: Union[CanvasWindow, None]
 
     def process_event(self, event):
-        if (event.type == pygame.USEREVENT
-                and event.user_type == UI_WINDOW_MOVED_TO_FRONT
+        if (event.type == UI_WINDOW_MOVED_TO_FRONT
                 and event.ui_object_id == '#canvas_window'):
             self.active_canvas_window = event.ui_element
-        if (event.type == pygame.USEREVENT
-                and event.user_type == UI_WINDOW_CLOSE
+        if (event.type == UI_WINDOW_CLOSE
                 and event.ui_object_id == '#canvas_window'
                 and self.active_canvas_window == event.ui_element):
             self.active_canvas_window = None
 
-        if (event.type == pygame.USEREVENT
-                and event.user_type == UI_BUTTON_START_PRESS
+        if (event.type == UI_BUTTON_START_PRESS
                 and event.ui_object_id == 'menu_bar.#file_menu_items.#new'):
             new_canvas_dialog = pygame.Rect(0, 0, 400, 300)
             new_canvas_dialog.center = self.window_surface.get_rect().center
             UINewCanvasDialog(rect=new_canvas_dialog,
                               manager=self.ui_manager)
 
-        if (event.type == pygame.USEREVENT
-                and event.user_type == UI_BUTTON_START_PRESS
+        if (event.type == UI_BUTTON_START_PRESS
                 and event.ui_object_id == 'menu_bar.#file_menu_items.#open'):
             file_dialog_rect = pygame.Rect(0, 0, 400, 500)
             file_dialog_rect.center = self.window_surface.get_rect().center
@@ -53,8 +49,7 @@ class MenuBarEventHandler:
                          object_id='#open_file_dialog',
                          allow_existing_files_only=True)
 
-        if (event.type == pygame.USEREVENT
-                and event.user_type == UI_BUTTON_START_PRESS
+        if (event.type == UI_BUTTON_START_PRESS
                 and event.ui_object_id == 'menu_bar.#file_menu_items.#save'
                 and self.active_canvas_window is not None
                 and self.active_canvas_window.canvas_ui.save_file_path is not None):
@@ -72,8 +67,7 @@ class MenuBarEventHandler:
                                                  window_title='Saving error')
                 message_window.set_blocking(True)
 
-        if (event.type == pygame.USEREVENT
-                and event.user_type == UI_BUTTON_START_PRESS
+        if (event.type == UI_BUTTON_START_PRESS
                 and event.ui_object_id == 'menu_bar.#file_menu_items.#save_as'
                 and self.active_canvas_window is not None):
             file_dialog_rect = pygame.Rect(0, 0, 400, 500)
@@ -90,20 +84,17 @@ class MenuBarEventHandler:
                                        object_id='#save_file_dialog')
             save_dialog.set_blocking(True)
 
-        if (event.type == pygame.USEREVENT
-                and event.user_type == UI_BUTTON_START_PRESS
+        if (event.type == UI_BUTTON_START_PRESS
                 and event.ui_object_id == 'menu_bar.#edit_menu_items.#undo'
                 and self.active_canvas_window is not None):
             self._try_undo()
 
-        if (event.type == pygame.USEREVENT
-                and event.user_type == UI_BUTTON_START_PRESS
+        if (event.type == UI_BUTTON_START_PRESS
                 and event.ui_object_id == 'menu_bar.#edit_menu_items.#redo'
                 and self.active_canvas_window is not None):
             self._try_redo()
 
-        if (event.type == pygame.USEREVENT
-                and event.user_type == UI_BUTTON_START_PRESS
+        if (event.type == UI_BUTTON_START_PRESS
                 and event.ui_object_id == 'menu_bar.#view_menu_items.#info'
                 and self.active_canvas_window is not None):
             info_window_rect = pygame.Rect(0, 0, 400, 250)
@@ -123,8 +114,7 @@ class MenuBarEventHandler:
                             manager=self.ui_manager,
                             window_title='Image info')
 
-        if (event.type == pygame.USEREVENT
-                and event.user_type == UI_BUTTON_START_PRESS
+        if (event.type == UI_BUTTON_START_PRESS
                 and event.ui_object_id == 'menu_bar.#help_menu_items.#about'):
             about_window_rect = pygame.Rect(0, 0, 400, 250)
             about_window_rect.center = self.window_surface.get_rect().center
@@ -137,8 +127,7 @@ class MenuBarEventHandler:
                             manager=self.ui_manager,
                             window_title='About')
 
-        if (event.type == pygame.USEREVENT and
-                event.user_type == UI_FILE_DIALOG_PATH_PICKED and
+        if (event.type == UI_FILE_DIALOG_PATH_PICKED and
                 event.ui_object_id == '#save_file_dialog'):
             path = Path(event.text)
             self.last_used_file_path = path.parent

@@ -3,6 +3,8 @@ import pygame
 from pygame_gui.elements import UIWindow, UILabel, UITextEntryLine, UIButton
 from pygame_gui import UI_BUTTON_PRESSED, UI_TEXT_ENTRY_FINISHED, UI_TEXT_ENTRY_CHANGED
 
+from ui.event_types import UI_PAINT_CREATE_NEW_CANVAS
+
 
 class UINewCanvasDialog(UIWindow):
     def __init__(self, rect,
@@ -73,27 +75,22 @@ class UINewCanvasDialog(UIWindow):
 
     def process_event(self, event: pygame.event.Event) -> bool:
         consumed_event = super().process_event(event)
-        if (event.type == pygame.USEREVENT and
-                event.user_type == UI_BUTTON_PRESSED and
+        if (event.type == UI_BUTTON_PRESSED and
                 event.ui_element == self.cancel_button):
             self.kill()
 
-        if (event.type == pygame.USEREVENT and
-                event.user_type == UI_BUTTON_PRESSED and
+        if (event.type == UI_BUTTON_PRESSED and
                 event.ui_element == self.ok_button):
-            event_data = {'user_type': 'create_new_canvas',
-                          'colour': self.current_colour,
+            event_data = {'colour': self.current_colour,
                           'size': (min(int(self.width_entry.get_text()), self.max_width),
                                    min(int(self.height_entry.get_text()), self.max_height)),
                           'ui_element': self,
                           'ui_object_id': self.most_specific_combined_id}
-            new_canvas_event = pygame.event.Event(pygame.USEREVENT, event_data)
+            new_canvas_event = pygame.event.Event(UI_PAINT_CREATE_NEW_CANVAS, event_data)
             pygame.event.post(new_canvas_event)
             self.kill()
 
-        if (event.type == pygame.USEREVENT and
-                event.user_type == UI_TEXT_ENTRY_FINISHED):
-
+        if event.type == UI_TEXT_ENTRY_FINISHED:
             if event.ui_element == self.width_entry:
                 try:
                     int_value = int(self.width_entry.get_text())
@@ -114,8 +111,7 @@ class UINewCanvasDialog(UIWindow):
                 if int_value > self.max_height:
                     self.height_entry.set_text(str(self.max_height))
 
-        if (event.type == pygame.USEREVENT and
-                event.user_type == UI_TEXT_ENTRY_CHANGED):
+        if event.type == UI_TEXT_ENTRY_CHANGED:
             try:
                 int(event.ui_element.get_text())
             except ValueError:

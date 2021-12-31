@@ -7,6 +7,8 @@ from tools.brush_tool import BrushTool
 from tools.fill_tool import FillTool
 from tools.dropper_tool import DropperTool
 
+from ui.event_types import UI_PAINT_COLOUR_DROPPER_CHANGED, UI_PAINT_PAINTING_TOOL_CHANGED
+
 
 class ToolBarWindow(pygame_gui.elements.UIWindow):
     def __init__(self, rect,
@@ -93,9 +95,8 @@ class ToolBarWindow(pygame_gui.elements.UIWindow):
 
         self.refresh_tool_options_ui()
 
-        pygame.event.post(pygame.event.Event(pygame.USEREVENT,
-                                             {'user_type': 'paint_tool_changed',
-                                              'ui_object_id': self.most_specific_combined_id,
+        pygame.event.post(pygame.event.Event(UI_PAINT_PAINTING_TOOL_CHANGED,
+                                             {'ui_object_id': self.most_specific_combined_id,
                                               'ui_element': self,
                                               'tool': self.active_tool}))
 
@@ -199,28 +200,23 @@ class ToolBarWindow(pygame_gui.elements.UIWindow):
                                                               pygame.Color(255,255,255,255))
             print(distance)
 
-        if (event.type == pygame.USEREVENT and
-                event.user_type == pygame_gui.UI_BUTTON_PRESSED and
+        if (event.type == pygame_gui.UI_BUTTON_PRESSED and
                 event.ui_object_id == "#tool_bar_window.#brush_button"):
             self.set_active_tool('brush')
-        if (event.type == pygame.USEREVENT and
-                event.user_type == pygame_gui.UI_BUTTON_PRESSED and
+        if (event.type == pygame_gui.UI_BUTTON_PRESSED and
                 event.ui_object_id == "#tool_bar_window.#fill_button"):
             self.set_active_tool('fill')
-        if (event.type == pygame.USEREVENT and
-                event.user_type == pygame_gui.UI_BUTTON_PRESSED and
+        if (event.type == pygame_gui.UI_BUTTON_PRESSED and
                 event.ui_object_id == "#tool_bar_window.#dropper_button"):
             self.set_active_tool('dropper')
 
-        if (event.type == pygame.USEREVENT and
-                event.user_type == pygame_gui.UI_BUTTON_PRESSED and
+        if (event.type == pygame_gui.UI_BUTTON_PRESSED and
                 event.ui_element == self.palette_button):
             pygame_gui.windows.UIColourPickerDialog(rect=pygame.Rect(100, 300, 390, 390),
                                                     manager=self.ui_manager,
                                                     initial_colour=self.palette_colour)
 
-        if (event.type == pygame.USEREVENT and
-                event.user_type == 'colour_dropper_changed'):
+        if event.type == UI_PAINT_COLOUR_DROPPER_CHANGED:
             self.palette_colour = event.colour
             self.active_tool.set_option('palette_colour', self.palette_colour)
             self.palette_button.normal_image = pygame.Surface((58, 58),
@@ -230,8 +226,7 @@ class ToolBarWindow(pygame_gui.elements.UIWindow):
             self.palette_button.hovered_image = self.palette_button.normal_image
             self.palette_button.selected_image = self.palette_button.normal_image
             self.palette_button.rebuild()
-        if (event.type == pygame.USEREVENT and
-                event.user_type == pygame_gui.UI_COLOUR_PICKER_COLOUR_PICKED):
+        if event.type == pygame_gui.UI_COLOUR_PICKER_COLOUR_PICKED:
             self.palette_colour = event.colour
             self.active_tool.set_option('palette_colour', self.palette_colour)
             self.palette_button.normal_image = pygame.Surface((58, 58),
@@ -242,20 +237,17 @@ class ToolBarWindow(pygame_gui.elements.UIWindow):
             self.palette_button.selected_image = self.palette_button.normal_image
             self.palette_button.rebuild()
 
-        if (event.type == pygame.USEREVENT and
-                event.user_type == pygame_gui.UI_HORIZONTAL_SLIDER_MOVED and
+        if (event.type == pygame_gui.UI_HORIZONTAL_SLIDER_MOVED and
                 event.ui_object_id == '#tool_bar_window.#brush_size_slider'):
             self.brush_size = int(event.value)
             self.active_tool.set_option('brush_size', self.brush_size)
 
-        if (event.type == pygame.USEREVENT and
-                event.user_type == pygame_gui.UI_HORIZONTAL_SLIDER_MOVED and
+        if (event.type == pygame_gui.UI_HORIZONTAL_SLIDER_MOVED and
                 event.ui_object_id == '#tool_bar_window.#opacity_slider'):
             self.opacity = int(event.value)
             self.active_tool.set_option('opacity', self.opacity)
 
-        if (event.type == pygame.USEREVENT and
-                event.user_type == pygame_gui.UI_HORIZONTAL_SLIDER_MOVED and
+        if (event.type == pygame_gui.UI_HORIZONTAL_SLIDER_MOVED and
                 event.ui_object_id == '#tool_bar_window.#threshold_slider'):
             self.threshold = float(event.value)
             self.active_tool.set_option('threshold', self.threshold)

@@ -5,6 +5,7 @@ import pygame
 import pygame_gui
 
 from tools.undo_record import UndoRecord
+from ui.event_types import  UI_PAINT_PAINTING_TOOL_CHANGED
 
 
 class EditableCanvas(pygame_gui.core.ui_element.UIElement):
@@ -48,7 +49,7 @@ class EditableCanvas(pygame_gui.core.ui_element.UIElement):
     def process_event(self, event: pygame.event.Event) -> bool:
         consumed_event = False
 
-        if event.type == pygame.USEREVENT and event.user_type == 'paint_tool_changed':
+        if event.type == UI_PAINT_PAINTING_TOOL_CHANGED:
             self.set_active_tool(event.tool)
 
         if (self.active_tool is not None and

@@ -1,5 +1,7 @@
 import pygame
 
+from ui.event_types import UI_PAINT_COLOUR_DROPPER_CHANGED
+
 
 class DropperTool:
 
@@ -37,9 +39,8 @@ class DropperTool:
 
             new_colour = canvas_surface.get_at(self.start_dropper_position)
 
-            pygame.event.post(pygame.event.Event(pygame.USEREVENT,
-                                                 {'user_type': 'colour_dropper_changed',
-                                                  'ui_object_id': '#dropper_tool',
+            pygame.event.post(pygame.event.Event(UI_PAINT_COLOUR_DROPPER_CHANGED,
+                                                 {'ui_object_id': '#dropper_tool',
                                                   'ui_element': self,
                                                   'colour': new_colour}))
 

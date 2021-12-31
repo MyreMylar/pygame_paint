@@ -9,6 +9,7 @@ from pygame_gui.windows import UIMessageWindow
 from ui.ui_canvas_window import CanvasWindow
 from ui.ui_tool_bar_window import ToolBarWindow
 from ui.ui_menu_bar import UIMenuBar
+from ui.event_types import UI_PAINT_CREATE_NEW_CANVAS
 
 from menu_bar_event_handler import MenuBarEventHandler
 
@@ -18,7 +19,7 @@ class PygamePaintApp:
         pygame.init()
 
         pygame.display.set_caption("Pygame Paint")
-        window_dimensions = (1024, 576)
+        window_dimensions = (1024, 800)
         self.window_surface = pygame.display.set_mode(window_dimensions)
         title_bar_icon = pygame.image.load('data/paint_icon.png')
         pygame.display.set_icon(title_bar_icon)
@@ -79,8 +80,7 @@ class PygamePaintApp:
 
                 self.menu_bar_event_handler.process_event(event)
 
-                if (event.type == pygame.USEREVENT and
-                        event.user_type == pygame_gui.UI_FILE_DIALOG_PATH_PICKED and
+                if (event.type == pygame_gui.UI_FILE_DIALOG_PATH_PICKED and
                         event.ui_object_id == '#open_file_dialog'):
                     path = Path(event.text)
                     self.menu_bar_event_handler.last_used_file_path = path.parent
@@ -110,7 +110,7 @@ class PygamePaintApp:
                                                          window_title='Loading error')
                         message_window.set_blocking(True)
 
-                if event.type == pygame.USEREVENT and event.user_type == 'create_new_canvas':
+                if event.type == UI_PAINT_CREATE_NEW_CANVAS:
 
                     new_canvas = pygame.Surface(event.size, flags=pygame.SRCALPHA, depth=32)
                     new_canvas.fill(event.colour)
