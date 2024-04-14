@@ -8,6 +8,7 @@ from pygame_gui.core import UIElement, UIContainer
 from pygame_gui.core.drawable_shapes import RectDrawableShape
 from pygame_gui.elements.ui_button import UIButton
 from pygame_gui.elements.ui_selection_list import UISelectionList
+from pygame_gui.core.gui_type_hints import Coordinate
 
 
 class UIMenuBar(UIElement):
@@ -63,7 +64,7 @@ class UIMenuBar(UIElement):
         for menu_item_key, menu_item_data in self.menu_item_data.items():
             # create top level menu buttons
             default_font = self.ui_manager.get_theme().get_font_dictionary().get_default_font()
-            _, item_text_rect = default_font.render(menu_item_data['display_name'], (0, 0, 0))
+            item_text_rect = default_font.get_rect(menu_item_data['display_name'])
             UIButton(pygame.Rect(top_level_button_x,
                                  0,
                                  item_text_rect.width + 20,
@@ -171,14 +172,13 @@ class UIMenuBar(UIElement):
         self.menu_bar_container.kill()
         super().kill()
 
-    def set_dimensions(self, dimensions: Union[pygame.math.Vector2,
-                                               Tuple[int, int],
-                                               Tuple[float, float]]):
+    def set_dimensions(self, dimensions: Coordinate, clamp_to_container: bool = False):
         """
         Set the size of this menu and then re-sizes and shifts the contents of the menu container
         to fit the new size.
 
         :param dimensions: The new dimensions to set.
+        :param clamp_to_container:
 
         """
         # Don't use a basic gate on this set dimensions method because the container may be a

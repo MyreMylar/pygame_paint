@@ -126,8 +126,6 @@ class PygamePaintApp:
 
                     canvas_window.canvas_ui.set_active_tool(self.tool_bar_window.get_active_tool())
 
-
-
                 self.ui_manager.process_events(event)
 
             self.ui_manager.update(time_delta=time_delta)

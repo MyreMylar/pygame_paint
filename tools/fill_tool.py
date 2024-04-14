@@ -2,6 +2,7 @@ import pygame
 
 from tools.undo_record import UndoRecord
 
+
 class FillTool:
 
     def __init__(self, palette_colour, opacity, threshold):
