@@ -1,4 +1,4 @@
-from typing import Union, List
+from typing import Optional
 from pathlib import Path
 
 import pygame
@@ -20,7 +20,7 @@ class MenuBarEventHandler:
 
         self.last_used_file_path = str(Path('.').absolute())
 
-        self.active_canvas_window = None  # type: Union[CanvasWindow, None]
+        self.active_canvas_window: Optional[CanvasWindow] = None
 
     def process_event(self, event):
         if (event.type == UI_WINDOW_MOVED_TO_FRONT

@@ -57,7 +57,7 @@ class ToolBarWindow(pygame_gui.elements.UIWindow):
         self.tool_options_ui_dict = {}
 
         # tool options params
-        self.palette_colour = pygame.Color(255,255,255,255)
+        self.palette_colour = pygame.Color(255, 255, 255, 255)
         self.brush_size = 16
         self.opacity = 255
         self.threshold = 0.1
@@ -131,40 +131,40 @@ class ToolBarWindow(pygame_gui.elements.UIWindow):
                                                                                   'bottom': 'bottom'})
                     current_y += 20
                     self.tool_options_ui_dict['opacity_slider'] = UIHorizontalSlider(
-                                                                    pygame.Rect(10, current_y, 148, 20),
-                                                                    value_range=(0, 255),
-                                                                    start_value=self.opacity,
-                                                                    manager=self.ui_manager,
-                                                                    container=self,
-                                                                    object_id='#opacity_slider',
-                                                                    anchors={'left': 'left',
-                                                                             'right': 'left',
-                                                                             'top': 'bottom',
-                                                                             'bottom': 'bottom'})
+                        pygame.Rect(10, current_y, 148, 20),
+                        value_range=(0, 255),
+                        start_value=self.opacity,
+                        manager=self.ui_manager,
+                        container=self,
+                        object_id='#opacity_slider',
+                        anchors={'left': 'left',
+                                 'right': 'left',
+                                 'top': 'bottom',
+                                 'bottom': 'bottom'})
                     current_y += 25
 
                 elif option_data == 'brush_size':
                     self.tool_options_ui_dict['brush_size_label'] = UILabel(pygame.Rect(10, current_y,
-                                                                                     148, 20),
-                                                                         "Brush size:",
-                                                                         manager=self.ui_manager,
-                                                                         container=self,
-                                                                         anchors={'left': 'left',
-                                                                                  'right': 'left',
-                                                                                  'top': 'bottom',
-                                                                                  'bottom': 'bottom'})
+                                                                                        148, 20),
+                                                                            "Brush size:",
+                                                                            manager=self.ui_manager,
+                                                                            container=self,
+                                                                            anchors={'left': 'left',
+                                                                                     'right': 'left',
+                                                                                     'top': 'bottom',
+                                                                                     'bottom': 'bottom'})
                     current_y += 20
                     self.tool_options_ui_dict['brush_size'] = UIHorizontalSlider(
-                                                                    pygame.Rect(10, current_y, 148, 20),
-                                                                    value_range=(1, 100),
-                                                                    start_value=self.brush_size,
-                                                                    manager=self.ui_manager,
-                                                                    container=self,
-                                                                    object_id='#brush_size_slider',
-                                                                    anchors={'left': 'left',
-                                                                             'right': 'left',
-                                                                             'top': 'bottom',
-                                                                             'bottom': 'bottom'})
+                        pygame.Rect(10, current_y, 148, 20),
+                        value_range=(1, 100),
+                        start_value=self.brush_size,
+                        manager=self.ui_manager,
+                        container=self,
+                        object_id='#brush_size_slider',
+                        anchors={'left': 'left',
+                                 'right': 'left',
+                                 'top': 'bottom',
+                                 'bottom': 'bottom'})
                     current_y += 25
                 elif option_data == 'threshold':
                     self.tool_options_ui_dict['threshold_label'] = UILabel(
@@ -179,16 +179,16 @@ class ToolBarWindow(pygame_gui.elements.UIWindow):
                                  'bottom': 'bottom'})
                     current_y += 20
                     self.tool_options_ui_dict['threshold'] = UIHorizontalSlider(
-                                                                    pygame.Rect(10, current_y, 148, 20),
-                                                                    value_range=(0.0, 1.0),
-                                                                    start_value=self.threshold,
-                                                                    manager=self.ui_manager,
-                                                                    container=self,
-                                                                    object_id='#threshold_slider',
-                                                                    anchors={'left': 'left',
-                                                                             'right': 'left',
-                                                                             'top': 'bottom',
-                                                                             'bottom': 'bottom'})
+                        pygame.Rect(10, current_y, 148, 20),
+                        value_range=(0.0, 1.0),
+                        start_value=self.threshold,
+                        manager=self.ui_manager,
+                        container=self,
+                        object_id='#threshold_slider',
+                        anchors={'left': 'left',
+                                 'right': 'left',
+                                 'top': 'bottom',
+                                 'bottom': 'bottom'})
                     current_y += 25
 
     def get_active_tool(self):
@@ -197,7 +197,7 @@ class ToolBarWindow(pygame_gui.elements.UIWindow):
     def process_event(self, event: pygame.event.Event) -> bool:
         if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
             distance = FillTool.calc_distance_between_colours(pygame.Color(0, 0, 0, 255),
-                                                              pygame.Color(255,255,255,255))
+                                                              pygame.Color(255, 255, 255, 255))
             print(distance)
 
         if (event.type == pygame_gui.UI_BUTTON_PRESSED and

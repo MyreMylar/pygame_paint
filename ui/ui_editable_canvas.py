@@ -1,11 +1,11 @@
-from typing import Union, List
+from typing import List, Optional
 from pathlib import Path
 
 import pygame
 import pygame_gui
 
 from tools.undo_record import UndoRecord
-from ui.event_types import  UI_PAINT_PAINTING_TOOL_CHANGED
+from ui.event_types import UI_PAINT_PAINTING_TOOL_CHANGED
 
 
 class EditableCanvas(pygame_gui.core.ui_element.UIElement):
@@ -32,10 +32,10 @@ class EditableCanvas(pygame_gui.core.ui_element.UIElement):
         self.set_image(image_surface)
 
         self.active_tool = None
-        self.save_file_path = None  # type: Union[Path, None]
+        self.save_file_path: Optional[Path] = None
 
-        self.undo_stack = []  # type: List[Union[UndoRecord, None]]
-        self.redo_stack = []  # type: List[Union[UndoRecord, None]]
+        self.undo_stack: List[Optional[UndoRecord]] = []
+        self.redo_stack: List[Optional[UndoRecord]] = []
 
     def set_save_file_path(self, path):
         self.save_file_path = path
@@ -73,3 +73,9 @@ class EditableCanvas(pygame_gui.core.ui_element.UIElement):
         else:
             return self.image
 
+    def set_image(self, new_image: Optional[pygame.surface.Surface]) -> None:
+        """
+
+        :param new_image: the new image surface to use in the UIImage element.
+        """
+        self._set_image(new_image)
