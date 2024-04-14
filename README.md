@@ -3,4 +3,5 @@ A simple paint program made using pygame &amp; pygame_gui.
 
 __Screenshot__:
 
-![pygame_paint](https://user-images.githubusercontent.com/13382426/79631343-b60ea000-8150-11ea-8ddf-cbd4d835962c.png)
+![pygame_paint](https://github.com/MyreMylar/pygame_paint/assets/13382426/1580d1af-363d-4bbc-afe2-22246a1ac3bf)
+
